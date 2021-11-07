@@ -7,6 +7,8 @@ import os
 import warnings
 from pathlib import Path
 
+from threading import Thread
+import json
 import pkg_resources as pkg
 import torch
 from torch.utils.tensorboard import SummaryWriter
@@ -82,7 +84,8 @@ class Loggers():
         for k in LOGGERS:
             setattr(self, k, None)  # init empty logger dictionary
         self.csv = True  # always log to csv
-
+        
+        self.metrics = True # log to metrics file at the end of the run
         # Messages
         # if not wandb:
         #     prefix = colorstr('Weights & Biases: ')
@@ -228,9 +231,9 @@ class Loggers():
         if self.csv:
             file = self.save_dir / 'results.csv'
             n = len(x) + 1  # number of cols
-            s = '' if file.exists() else (('%20s,' * n % tuple(['epoch'] + self.keys)).rstrip(',') + '\n')  # add header
+            s = '' if file.exists() else (('%s,' * n % tuple(['epoch'] + self.keys)).rstrip(',') + '\n')  # add header
             with open(file, 'a') as f:
-                f.write(s + ('%20.5g,' * n % tuple([epoch] + vals)).rstrip(',') + '\n')
+                f.write(s + ('%.5g,' * n % tuple([epoch] + vals)).rstrip(',') + '\n')
 
         if self.tb:
             for k, v in x.items():
@@ -279,6 +282,13 @@ class Loggers():
         if self.tb and not self.clearml:  # These images are already captured by ClearML by now, we don't want doubles
             for f in files:
                 self.tb.add_image(f.stem, cv2.imread(str(f))[..., ::-1], epoch, dataformats='HWC')
+
+        if self.metrics:
+            file = self.save_dir / 'metrics.json'
+            m={"precision":results[0],"recall":results[1],"mAP_0.5":results[2],"mAP_0.5:0.95":results[3]}
+
+            with open(file, 'w') as f:
+                f.write(json.dumps(m))
 
         if self.wandb:
             self.wandb.log(dict(zip(self.keys[3:10], results)))
