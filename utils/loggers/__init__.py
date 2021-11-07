@@ -285,7 +285,7 @@ class Loggers():
 
         if self.metrics:
             file = self.save_dir / 'metrics.json'
-            m={"precision":results[0],"recall":results[1],"mAP_0.5":results[2],"mAP_0.5:0.95":results[3]}
+            m={"precision":results[0],"recall":results[1],"mAP_0_5":results[2],"mAP_0_5-0_95":results[3]}
 
             with open(file, 'w') as f:
                 f.write(json.dumps(m))
