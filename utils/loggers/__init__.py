@@ -271,7 +271,7 @@ class Loggers():
         if self.comet_logger:
             self.comet_logger.on_model_save(last, epoch, final_epoch, best_fitness, fi)
 
-    def on_train_end(self, last, best, epoch, results):
+    def on_train_end(self, last, best, epoch, results, total_train_time):
         # Callback runs on training end, i.e. saving best model
         if self.plots:
             plot_results(file=self.save_dir / 'results.csv')  # save results.png
@@ -285,7 +285,7 @@ class Loggers():
 
         if self.metrics:
             file = self.save_dir / 'metrics.json'
-            m={"precision":results[0],"recall":results[1],"mAP_0_5":results[2],"mAP_0_5-0_95":results[3]}
+            m={"precision":results[0],"recall":results[1],"mAP_0_5":results[2],"mAP_0_5-0_95":results[3], "total_train_hours":total_train_time}
 
             with open(file, 'w') as f:
                 f.write(json.dumps(m))
