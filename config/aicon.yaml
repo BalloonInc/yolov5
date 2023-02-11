@@ -1,0 +1,35 @@
+# Train/val/test sets as 1) dir: path/to/imgs, 2) file: path/to/imgs.txt, or 3) list: [path/to/imgs1, path/to/imgs2, ..]
+path: ../../labeled-images  # dataset root dir
+train: images/train  # train images (relative to 'path') 128 images
+val: images/validate  # val images (relative to 'path') 128 images
+test: images/test # test images (optional)
+
+# Classes
+nc: 26  # number of classes
+names: ['Person',
+        'Container',
+        'Crane base',
+        'Crane head',
+        'Cement mixer (truck)',
+        'Concrete pump',
+        'Excavator (small)',
+        'Excavator (large)',
+        'Tractor',
+        'Dumper (trailer)',
+        'Dumper truck',
+        'Roller',
+        'Formwork column',
+        'Rebars column',
+        'Rebars net (multiple)',
+        'Rebars (beugels - multiple)',
+        'Rebars (staven - multiple)',
+        'Cubicle',
+        'Waste container',
+        'Flat truck',
+        'Car',
+        'Manitou',
+        'Anchoring Machine',
+        'Mobile Crane',
+        'Digger',
+        'Pile Driver',
+        ]  # class names
