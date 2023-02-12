@@ -5,7 +5,7 @@ val: images/validate  # val images (relative to 'path') 128 images
 test: images/test # test images (optional)
 
 # Classes
-nc: 26  # number of classes
+nc: 33  # number of classes
 names: ['Person',
         'Container',
         'Crane base',
@@ -32,4 +32,11 @@ names: ['Person',
         'Mobile Crane',
         'Digger',
         'Pile Driver',
+        'Steel tube',
+        'Pile storage',
+        'Sheet pile',
+        'Sheet pile storage',
+        'pile driver head',
+        'Pile-in-machine',
+        'Sheet-Pile-In-Machine',
         ]  # class names
