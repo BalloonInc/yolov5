@@ -5,6 +5,8 @@ import os
 import warnings
 from pathlib import Path
 
+from threading import Thread
+import json
 import pkg_resources as pkg
 import torch
 
@@ -101,7 +103,7 @@ class Loggers:
         self.csv = True  # always log to csv
         self.ndjson_console = "ndjson_console" in self.include  # log ndjson to console
         self.ndjson_file = "ndjson_file" in self.include  # log ndjson to file
-
+        self.metrics = True # log to metrics file at the end of the run
         # Messages
         if not comet_ml:
             prefix = colorstr("Comet: ")
@@ -243,9 +245,9 @@ class Loggers:
         if self.csv:
             file = self.save_dir / "results.csv"
             n = len(x) + 1  # number of cols
-            s = "" if file.exists() else (("%20s," * n % tuple(["epoch"] + self.keys)).rstrip(",") + "\n")  # add header
+            s = "" if file.exists() else (("%s," * n % tuple(["epoch"] + self.keys)).rstrip(",") + "\n")  # add header
             with open(file, "a") as f:
-                f.write(s + ("%20.5g," * n % tuple([epoch] + vals)).rstrip(",") + "\n")
+                f.write(s + ("%.5g," * n % tuple([epoch] + vals)).rstrip(",") + "\n")
         if self.ndjson_console or self.ndjson_file:
             json_data = json.dumps(dict(epoch=epoch, **x), default=_json_default)
         if self.ndjson_console:
@@ -289,7 +291,7 @@ class Loggers:
         if self.comet_logger:
             self.comet_logger.on_model_save(last, epoch, final_epoch, best_fitness, fi)
 
-    def on_train_end(self, last, best, epoch, results):
+    def on_train_end(self, last, best, epoch, results, total_train_time):
         # Callback runs on training end, i.e. saving best model
         if self.plots:
             plot_results(file=self.save_dir / "results.csv")  # save results.png
@@ -300,6 +302,13 @@ class Loggers:
         if self.tb and not self.clearml:  # These images are already captured by ClearML by now, we don't want doubles
             for f in files:
                 self.tb.add_image(f.stem, cv2.imread(str(f))[..., ::-1], epoch, dataformats="HWC")
+
+        if self.metrics:
+            file = self.save_dir / 'metrics.json'
+            m={"precision":results[0],"recall":results[1],"mAP_0_5":results[2],"mAP_0_5-0_95":results[3], "total_train_hours":total_train_time}
+
+            with open(file, 'w') as f:
+                f.write(json.dumps(m))
 
         if self.wandb:
             self.wandb.log(dict(zip(self.keys[3:10], results)))
