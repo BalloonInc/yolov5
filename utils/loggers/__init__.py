@@ -103,7 +103,7 @@ class Loggers:
         self.csv = True  # always log to csv
         self.ndjson_console = "ndjson_console" in self.include  # log ndjson to console
         self.ndjson_file = "ndjson_file" in self.include  # log ndjson to file
-        self.metrics = True # log to metrics file at the end of the run
+        self.metrics = True  # log to metrics file at the end of the run
         # Messages
         if not comet_ml:
             prefix = colorstr("Comet: ")
@@ -304,10 +304,16 @@ class Loggers:
                 self.tb.add_image(f.stem, cv2.imread(str(f))[..., ::-1], epoch, dataformats="HWC")
 
         if self.metrics:
-            file = self.save_dir / 'metrics.json'
-            m={"precision":results[0],"recall":results[1],"mAP_0_5":results[2],"mAP_0_5-0_95":results[3], "total_train_hours":total_train_time}
+            file = self.save_dir / "metrics.json"
+            m = {
+                "precision": results[0],
+                "recall": results[1],
+                "mAP_0_5": results[2],
+                "mAP_0_5-0_95": results[3],
+                "total_train_hours": total_train_time,
+            }
 
-            with open(file, 'w') as f:
+            with open(file, "w") as f:
                 f.write(json.dumps(m))
 
         if self.wandb:

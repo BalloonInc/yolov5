@@ -476,7 +476,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
 
     total_training_hours = (time.time() - t0) / 3600
     if RANK in {-1, 0}:
-        LOGGER.info(f'\n{epoch - start_epoch + 1} epochs completed in {total_training_hours:.3f} hours.')
+        LOGGER.info(f"\n{epoch - start_epoch + 1} epochs completed in {total_training_hours:.3f} hours.")
         for f in last, best:
             if f.exists():
                 strip_optimizer(f)  # strip optimizers
@@ -500,7 +500,7 @@ def train(hyp, opt, device, callbacks):  # hyp is path/to/hyp.yaml or hyp dictio
                     if is_coco:
                         callbacks.run("on_fit_epoch_end", list(mloss) + list(results) + lr, epoch, best_fitness, fi)
 
-        callbacks.run('on_train_end', last, best, epoch, results, total_training_hours)
+        callbacks.run("on_train_end", last, best, epoch, results, total_training_hours)
 
     torch.cuda.empty_cache()
     return results
